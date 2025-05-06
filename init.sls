@@ -55,5 +55,6 @@ john_the_ripper:
     - name: https://github.com/openwall/john.git
     - target: /home/vagrant/johntripper
     - user: vagrant
+    - group: vagrant
     - rev: bleeding-jumbo
     - depth: 1  
