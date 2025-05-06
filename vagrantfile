@@ -11,10 +11,10 @@ sudo apt-get install -y ufw
 sudo ufw allow 22/tcp
 sudo ufw allow 4505/tcp
 sudo ufw allow 4506/tcp
+sudo apt-get install -y salt-master
 sudo mkdir -p /srv/salt/attax/
 curl -fsSL https://raw.githubusercontent.com/veitim/miniprojekti/refs/heads/main/init.sls | sudo tee /srv/salt/attax/init.sls
 sudo apt-get install -y micro
-sudo apt-get install -y salt-master
 sudo systemctl enable salt-master --now
 sudo systemctl restart salt-master.service
 sudo ufw --force enable
