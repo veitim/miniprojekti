@@ -1,0 +1,39 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$pena = <<PENA
+sudo apt-get update
+sudo apt-get install -y curl
+curl -fsSL https://packages.broadcom.com/artifactory/api/security/keypair/SaltProjectKey/public | sudo tee /etc/apt/keyrings/salt-archive-keyring.pgp
+curl -fsSL https://github.com/saltstack/salt-install-guide/releases/latest/download/salt.sources | sudo tee /etc/apt/sources.list.d/salt.sources
+sudo apt-get update
+sudo apt-get install -y ufw
+sudo ufw allow 22/tcp
+sudo ufw allow 4505/tcp
+sudo ufw allow 4506/tcp
+sudo mkdir -p /srv/salt/attax/
+curl -fsSL https://raw.githubusercontent.com/veitim/miniprojekti/refs/heads/main/init.sls | sudo tee /srv/salt/attax/init.sls
+sudo apt-get install -y micro
+sudo apt-get install -y salt-master
+sudo systemctl enable salt-master --now
+sudo systemctl restart salt-master.service
+sudo ufw --force enable
+PENA
+
+Vagrant.configure("2") do |config|
+	config.vm.provider "virtualbox" do |vb|
+   		vb.memory = "2000"
+  	end
+	config.vm.define "mestari" do |mestari|
+		mestari.vm.box = "debian/bookworm64"
+		mestari.vm.provision "shell", inline: $pena
+		mestari.vm.hostname = "mestari"
+		mestari.vm.network "private_network", ip: "192.168.88.101"
+	end
+    
+	config.vm.define "kohde" do |kohde|
+  		kohde.vm.box = "rapid7/metasploitable3-win2k8"
+  		kohde.vm.box_version = "0.1.0-weekly"
+		  kohde.vm.network "private_network", ip: "192.168.88.102"
+	end
+end
